@@ -1,3 +1,4 @@
+import { AuthenticationAction } from './actions/authentication';
 import { UsersAction } from './actions/users';
 import { AuthenticationService } from './shared/authentication.service';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +16,8 @@ import { LoginComponent } from './containers/login/login.component';
   ],
   providers: [
     AuthenticationService,
-    UsersAction
+    UsersAction,
+    AuthenticationAction
   ],
   declarations: [LoginComponent]
 })

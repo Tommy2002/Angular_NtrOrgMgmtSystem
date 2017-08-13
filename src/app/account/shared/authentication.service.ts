@@ -1,5 +1,5 @@
+import { AuthenticationAction } from './../actions/authentication';
 import { User } from './user';
-import { UsersAction } from './../actions/users';
 import { NgRedux } from '@angular-redux/store';
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
@@ -16,27 +16,26 @@ export class AuthenticationService {
 
   constructor(
     private http: Http,
-    private userAction: UsersAction
+    private authenticationAction: AuthenticationAction
   ) {
     this.headers.append('Content-Type', 'application/json');
     const currenUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currenUser && currenUser.token;
   }
 
-  login(username: string, password: string) {
-      return this.http.post(`${this.api}/api-token-auth/`, JSON.stringify({ username: username, password: password }),  { headers: this.headers })
+  login(username: string, password: string): Observable<boolean> {
+    return this.http.post(`${this.api}/api-token-auth/`,
+      JSON.stringify({ username: username, password: password }), { headers: this.headers })
       .map((resposne: Response) => {
-        console.log("Fehler");
         const token = resposne.json() && resposne.json().token;
         if (token) {
           this.token = token;
           localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
-          return new User(1, 'thomas.pons', '', 'Thomas', 'Pons', 'test@test.de');
+          this.authenticationAction.authLogin(true, "123456", token);
+          return true;
+        } else {
+          return false;
         }
-      })
-      .catch(this.errorHandler)
-      .subscribe((action) => {
-        this.userAction.authLogin(action);
       });
   }
 

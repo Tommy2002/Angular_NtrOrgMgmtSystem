@@ -19,7 +19,7 @@ import { select } from '@angular-redux/store';
 export class LoginComponent implements OnInit {
 
   @select((state: IAppState) => state.users.me.username) me$:
-    Observable<User>;
+  Observable<User>;
 
   user = UserFactory.empty();
   errors: { [key: string]: string } = {};
@@ -51,9 +51,16 @@ export class LoginComponent implements OnInit {
 
   submitForm() {
     const user: User = UserFactory.fromObject(this.myForm.value);
-    const test = this.authenticationService.login(user.username, user.password)
-    console.log(test);
-    this.router.navigate(['/']);
+    this.authenticationService.login(user.username, user.password)
+      .subscribe(result => {
+        if (result === true) {
+          console.log("Erfolgreich angemeldet");
+        } else {
+          console.log("Fehlerhafte anmeldung");
+          this.errors['non_fields_errors'] = 'Benutzername oder Password falsch';
+        }
+      });
+    //this.router.navigate(['/']);
   }
 
   updateErrorMessages() {
@@ -65,8 +72,8 @@ export class LoginComponent implements OnInit {
         control.invalid &&
         control.errors[message.forValidator] &&
         !this.errors[message.forControl]) {
-          this.errors[message.forControl] = message.text;
-        }
+        this.errors[message.forControl] = message.text;
+      }
     }
   }
 }

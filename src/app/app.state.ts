@@ -12,6 +12,6 @@ export interface IUserState {
 
 export interface IAuthenticationState {
   isLogin: boolean;
-  isLoginDateTime: string;
+  loginDateTime: string;
   token: string;
 }
