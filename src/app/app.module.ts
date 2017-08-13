@@ -1,8 +1,10 @@
+import { reducer } from './reducers/index';
+import { IAppState } from './app.state';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { NgRedux, NgReduxModule, DevToolsExtension } from '@angular-redux/store';
 import { HttpModule } from '@angular/http';
-
+import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -12,11 +14,28 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
-    FormsModule,
+    ReactiveFormsModule,
     HttpModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgReduxModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private ngRedux: NgRedux<IAppState>,
+              private devTools: DevToolsExtension) {
+                let enhancers = [];
+
+                if (devTools.isEnabled()) {
+                  enhancers = [...enhancers, devTools.enhancer()];
+                }
+
+                this.ngRedux.configureStore(
+                  reducer,
+                  {} as IAppState,
+                  [],
+                  enhancers
+                );
+              }
+ }
