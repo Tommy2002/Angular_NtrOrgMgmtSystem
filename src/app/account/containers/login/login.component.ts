@@ -1,25 +1,18 @@
-import { Observable } from 'rxjs/Observable';
 import { AuthenticationService } from './../../shared/authentication.service';
 import { FormErrorMessages } from './form-error-messages';
 import { UserFactory } from './../../shared/user-factory';
 import { User } from './../../shared/user';
-import { IAppState } from './../../../app.state';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { select } from '@angular-redux/store';
 
 
 @Component({
   selector: 'ntr-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-
-  @select((state: IAppState) => state.users.me.username) me$:
-  Observable<User>;
 
   user = UserFactory.empty();
   errors: { [key: string]: string } = {};
@@ -54,13 +47,14 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(user.username, user.password)
       .subscribe(result => {
         if (result === true) {
-          console.log("Erfolgreich angemeldet");
-        } else {
-          console.log("Fehlerhafte anmeldung");
-          this.errors['non_fields_errors'] = 'Benutzername oder Password falsch';
+          this.router.navigate(['/']);
+        }
+      }, error => {
+        let test = error.json();
+        for (let error_fields in error.json()) {
+          this.errors[error_fields] = test[error_fields];
         }
       });
-    //this.router.navigate(['/']);
   }
 
   updateErrorMessages() {

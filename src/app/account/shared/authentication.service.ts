@@ -1,6 +1,3 @@
-import { AuthenticationAction } from './../actions/authentication';
-import { User } from './user';
-import { NgRedux } from '@angular-redux/store';
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
@@ -15,8 +12,7 @@ export class AuthenticationService {
   private headers: Headers = new Headers();
 
   constructor(
-    private http: Http,
-    private authenticationAction: AuthenticationAction
+    private http: Http
   ) {
     this.headers.append('Content-Type', 'application/json');
     const currenUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -31,7 +27,6 @@ export class AuthenticationService {
         if (token) {
           this.token = token;
           localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
-          this.authenticationAction.authLogin(true, "123456", token);
           return true;
         } else {
           return false;
